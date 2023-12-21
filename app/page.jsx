@@ -11,8 +11,7 @@ const getTickets = async () => {
       throw new Error(`Failed to get tickets. Status: ${res.status}`);
     }
 
-    const data = await res.json();
-    return { tickets: data }; // Restituisci i dati nel formato richiesto
+    return res.json();
   } catch (error) {
     // Gestisci eventuali errori di analisi JSON o fetch
     console.error("Failed to get tickets:", error.message);
@@ -20,7 +19,9 @@ const getTickets = async () => {
   }
 };
 
-const Dashborad = ({ tickets }) => {
+const Dashborad = async () => {
+  const { tickets } = await getTickets();
+
   const uniqueCategories = [
     ...new Set(tickets?.map(({ category }) => category)),
   ];
@@ -49,22 +50,5 @@ const Dashborad = ({ tickets }) => {
     </div>
   );
 };
-
-export async function getServerSideProps() {
-  try {
-    const { tickets } = await getTickets();
-
-    return {
-      props: {
-        tickets,
-      },
-    };
-  } catch (error) {
-    console.error("Error getting ticket data:", error.message);
-    return {
-      notFound: true,
-    };
-  }
-}
 
 export default Dashborad;

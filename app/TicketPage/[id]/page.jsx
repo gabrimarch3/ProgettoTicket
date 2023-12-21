@@ -1,5 +1,5 @@
 import TicketForm from "@/app/(components)/TicketForm";
-import { useRouter } from "next/router";
+import React from "react";
 
 const getTicketById = async (id) => {
   try {
@@ -14,40 +14,24 @@ const getTicketById = async (id) => {
     const jsonData = await res.json();
     return jsonData;
   } catch (error) {
+    // Gestisci eventuali errori di analisi JSON o fetch
     console.error("Error fetching or parsing JSON:", error.message);
     throw new Error("Failed to get ticket.");
   }
 };
 
-const TicketPage = ({ ticket }) => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const EDITMODE = id === "new" ? false : true;
-
-  return <TicketForm ticket={ticket} />;
-};
-
-export async function getServerSideProps({ params }) {
-  try {
-    let updateTicketData = {};
-
-    if (params.id !== "new") {
-      updateTicketData = await getTicketById(params.id);
-      updateTicketData = updateTicketData.foundTicket;
+const TicketPage = async ({ params }) => {
+  const EDITMODE = params.id === "new" ? false : true;
+  let updateTicketData = {};
+  if (EDITMODE) {
+    updateTicketData = await getTicketById(params.id);
+    updateTicketData = updateTicketData.foundTicket;
+  } else {
+    updateTicketData = {
+      _id: "new"
     }
-
-    return {
-      props: {
-        ticket: updateTicketData,
-      },
-    };
-  } catch (error) {
-    console.error("Error getting ticket data:", error.message);
-    return {
-      notFound: true,
-    };
   }
-}
+  return <TicketForm ticket={updateTicketData}/>;
+};
 
 export default TicketPage;
