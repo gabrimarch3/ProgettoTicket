@@ -2,15 +2,22 @@ import TicketForm from "@/app/(components)/TicketForm";
 import React from "react";
 
 const getTicketById = async (id) => {
-  const res = await fetch(`https://progetto-ticket-dou6.vercel.app/api/Tickets/${id}`, {
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`https://progetto-ticket-dou6.vercel.app/api/Tickets/${id}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(`Failed to get ticket. Status: ${res.status}`);
+    }
+
+    const jsonData = await res.json();
+    return jsonData;
+  } catch (error) {
+    // Gestisci eventuali errori di analisi JSON o fetch
+    console.error("Error fetching or parsing JSON:", error.message);
     throw new Error("Failed to get ticket.");
   }
-
-  return res.json();
 };
 
 const TicketPage = async ({ params }) => {

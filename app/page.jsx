@@ -3,13 +3,19 @@ import TicketCard from "./(components)/TicketCard";
 
 const getTickets = async () => {
   try {
-    const res = await fetch("http://progetto-ticket-dou6.vercel.app/api/Tickets", {
+    const res = await fetch("https://progetto-ticket-dou6.vercel.app/api/Tickets", {
       cache: "no-store",
     });
 
+    if (!res.ok) {
+      throw new Error(`Failed to get tickets. Status: ${res.status}`);
+    }
+
     return res.json();
   } catch (error) {
-    console.log("Failed to get tickets", error);
+    // Gestisci eventuali errori di analisi JSON o fetch
+    console.error("Failed to get tickets:", error.message);
+    throw new Error("Failed to get tickets.");
   }
 };
 
