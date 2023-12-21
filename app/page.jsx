@@ -7,9 +7,15 @@ const getTickets = async () => {
       cache: "no-store",
     });
 
+    if (!res.ok) {
+      throw new Error(`Failed to get tickets. Status: ${res.status}`);
+    }
+
     return res.json();
   } catch (error) {
-    console.log("Failed to get tickets", error);
+    // Gestisci eventuali errori di analisi JSON o fetch
+    console.error("Failed to get tickets:", error.message);
+    throw new Error(`Failed to get tickets. ${error.message}`);
   }
 };
 
