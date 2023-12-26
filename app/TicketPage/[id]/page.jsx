@@ -3,26 +3,18 @@ import React, { useState } from "react";
 
 const getTicketById = async (id) => {
   try {
-    // Check for cached ticket data
-    const cachedTicketData = localStorage.getItem(`ticket-${id}`);
-    if (cachedTicketData) {
-      return JSON.parse(cachedTicketData);
-    }
+    const res = await fetch(`https://progetto-ticket-dou6.vercel.app/api/Tickets/${id}`, {
+      cache: "no-store",
+    });
 
-    // Fetch ticket data from API if not cached
-    const res = await fetch(`https://progetto-ticket-dou6.vercel.app/api/Tickets/${id}`);
     if (!res.ok) {
       throw new Error(`Failed to get ticket. Status: ${res.status}`);
     }
 
     const jsonData = await res.json();
-    const ticketData = { foundTicket: jsonData };
-
-    // Cache ticket data for future use
-    localStorage.setItem(`ticket-${id}`, JSON.stringify(ticketData));
-    return ticketData;
+    return jsonData;
   } catch (error) {
-    // Handle error
+    // Gestisci eventuali errori di analisi JSON o fetch
     console.error("Error fetching or parsing JSON:", error.message);
     throw new Error("Failed to get ticket.");
   }
